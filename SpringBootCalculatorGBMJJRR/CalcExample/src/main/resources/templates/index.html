@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>GBM | Distribuidor de IBM, Lenovo, Microsoft, y servicios
+	de TI, GBM as a Service</title>
+
+<!--    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"> -->
+<!-- <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png"> -->
+<!-- <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png"> -->
+
+<link rel="shortcut icon" type="image/png" sizes="32x32"
+	href="https://www.gbm.net/favicons/favicon-32x32.png" />
+<!-- <link rel="shortcut icon"  type="image/png" sizes="16x16" href="/favicon-16x16.png" /> -->
+
+<style>
+#wrapper {
+	width: 400px;
+	background-color: #000080;
+	/* 	background-color: #ffffff; */
+	padding: 10px;
+	margin: 0 auto 0 auto;
+	border-radius: 5px;
+	color: #ffffff;
+}
+
+#logo {
+	width: 200px;
+	/*             background-color:  #000080; */
+	background-color: #ffffff;
+	padding: 10px;
+	margin: 0 auto 0 auto;
+	border-radius: 5px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+</style>
+</head>
+<body>
+	<header>
+		<img id="logo"
+			src="https://gbm.net/empleos/themes/website/assets/images/common/gbm-logo.svg" />
+	</header>
+	<section id="wrapper">
+		<h4>Esto es una demo del piloto 3 de GBM calculadora V 1.0</h4>
+		<form>
+			D&iacute;gito 1:<br /> <input type="text" name="number1" /> <br /> <br />
+			D&iacute;gito 2:<br /> <input type="text" name="number2" /> <br /> <br />
+			<input type="radio" name="mathType" value="+" /> Suma<br /> 
+			<input type="radio" name="mathType" value="*" /> Multiplicaci&oacute;n<br /> 
+			<input type="radio" name="mathType" value="/" /> Divisi&oacute;n <br /> <br />
+			<input type="submit" value="Resultado" />
+			<div th:if="${vResult} != null">
+				<p th:text="'El resultado es : ' + ${vResult}" />
+			</div>
+		</form>
+	</section>
+</body>
+</html>

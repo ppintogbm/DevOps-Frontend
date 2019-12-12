@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: CalculatorUh
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: jrocha
+Implementation-Vendor-Id: com.uh
+Build-Jdk: 1.8.0_171
+Implementation-URL: http://projects.spring.io/spring-boot/Calculator/
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+

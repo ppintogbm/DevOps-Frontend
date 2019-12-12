@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels: 
+    app: jenkins-ephemeral
+spec:
+  serviceAccountName: jenkins
+  volumes: 
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
+  containers:
+  - name: origin
+    image: openshift/origin-cli
+    command: 
+    - cat
+    tty: true
+  - name: docker
+    image: docker:18.06.1-ce
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - mountPath: /var/run/docker.sock
+      name: docker-sock
+    securityContext:
+      allowPrivilegeEscalation: true
+      privileged: true
+  - name: maven
+    image: maven:3.6.3-jdk-8
+    command: 
+    - "/bin/bash"
+    - "-c"
+    args: 
+    - cat
+    tty: true
