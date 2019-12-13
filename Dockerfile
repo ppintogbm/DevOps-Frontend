@@ -23,4 +23,3 @@ ADD ${JAR_FILE} Calculator.jar
 
 # Run the jar file 
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/Calculator.jar"]
-
