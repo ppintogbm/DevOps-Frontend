@@ -26,7 +26,7 @@ oc adm policy add-scc-to-user privileged -z jenkins
     3. `openshift-current-project`: Nombre del proyecto donde se está desplegando el pipeline.
     4. `registry`: Dirección interna del registro de openshift (predeterminado: 172.30.1.1:5000).
     5. `app`: Prefijo para los diferentes recursos e imágenes a ser generadas (predeterminado: api-calculadora). 
-    6. `apiAddress`: Ruta donde consumir el API.
+    6. `apiAddress`: Ruta donde consumir el API (Ej.: http://[service-name|hostname]:[port]).
 
 `pipeline-name.yaml`
 ```yaml
