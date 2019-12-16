@@ -9,7 +9,8 @@ pipeline{
 	parameters{
 		string(defaultValue: "jenkins", description: "Project/Namespace name", name: "project")
 		string(defaultValue: "172.30.1.1:5000", description: "Registry",  name:"registry")
-		string(defaultValue: "front-end-calculator", description: "Image Name", name: "image")
+		string(defaultValue: "front-end-calculadora", description: "Image Name", name: "app")
+		string(description: "API Address", name: "api-address")
 	}
 	stages{
 		stage('Prepare'){
@@ -21,9 +22,6 @@ pipeline{
 					}	
 					echo "Tag: ${tag}"
 				}
-				//script{
-				//	tag = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-				//}
 			}
 		}
 		stage('Build jar'){
@@ -36,39 +34,40 @@ pipeline{
 		stage('Docker build'){
 			steps{
 				container('docker'){
-					sh "docker build -t ${registry}/${project}/${image}:${tag} ."
+					sh "docker build -t ${registry}/${project}/${app}:${tag} ."
 					sh 'docker login -u $(whoami) -p $(cat /var/run/secrets/kubernetes.io/serviceaccount/token) ' + registry + '/' + project
-					sh "docker push ${registry}/${project}/${image}:${tag}"
+					sh "docker push ${registry}/${project}/${app}:${tag}"
 				}
 			}
 		}
-		/*stage('Deploy/Update'){
+		stage('Deploy/Update'){
 			steps{
 				container('origin'){
 					script{
 						openshift.withCluster(){
-							openshift.withProject(){
-								def deployment = openshift.selector('dc',[template: 'ace', app: image])
-								if(!deployment.exists()){             
-              						def model = openshift.process("-f", "oc/template.yaml", "-p", "APPLICATION_NAME=${image}", "-p", "IMAGE_NAME=${image}:latest")
-              						openshift.create(model)
-              						deployment = openshift.selector('dc',[template: 'ace', app: image])
-              					}
-								openshift.tag("${image}:${tag}","${image}:latest")
-              					//deployment.rollout().latest()
-              					def latestVersion = deployment.object().status.latestVersion
-								def rc = openshift.selector('rc',"${image}-${latestVersion}")
-								timeout(time:1, unit: 'MINUTES'){
-									rc.untilEach(1){
-										def rcMap = it.object()
-										return (rcMap.status.replicas.equals(rcMap.status.readyReplicas))
-                					}
-              					}
-							}
+								openshift.withProject(){
+									def deployment = openshift.selector('dc',[template: 'frontend-calculadora', app: app])
+									if(!deployment.exists()){             
+										def model = openshift.process("-f", "oc/template.yaml", "-p", "APPLICATION_NAME=${app}", "FRONT_IMAGE_NAME=${app}:latest", "-p", "IMAGE_NAMESPACE=${project}", "-p", "API_ADDRESS=${api-address}")
+										openshift.apply(model)
+										deployment = openshift.selector('dc',[template: 'api-calculadora', app: app])
+									}
+									openshift.tag("${app}-ace:${tag}","${app}:latest")
+									/*
+									def latestVersion = deployment.object().status.latestVersion
+									def rc = openshift.selector('rc',"${app}-${latestVersion}")
+									timeout(time:1, unit: 'MINUTES'){
+										rc.untilEach(1){
+											def rcMap = it.object()
+											return (rcMap.status.replicas.equals(rcMap.status.readyReplicas))
+										}
+									}
+									*/
+								}
 						}
 					}
 				}
 			}
-		}*/
+		}
 	}
 }

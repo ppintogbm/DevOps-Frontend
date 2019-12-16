@@ -1,0 +1,82 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: frontend-calculadora
+  description: Plantilla para desplegar piloto \#3 Calculadora
+  tags: springboot
+labels:
+  template: frontend-calculadora
+  version: "1.0"
+  app: ${APPLICATION_NAME}
+parameters:
+  - name: APPLICATION_NAME
+    description: Prefijo para nombre de recursos en la aplicación
+    required: true
+    value: frontend-calculadora
+  - name: API_ADDRESS
+    description: Dirección para consumir el API
+    required: true
+  - name: FRONT_IMAGE_NAME
+    description: Nombre de imagen a desplegar.
+    required: true
+  - name: IMAGE_NAMESPACE
+    description: Proyecto para obtener imagenes
+    required: true
+objects:
+  - kind: DeploymentConfig #frontend-dc
+    apiVersion: v1
+    metadata:
+      name: ${APPLICATION_NAME}-app
+    spec:
+      replicas: 1
+      selector: 
+        app: ${APPLICATION_NAME}-app
+      template:
+        metadata:
+          labels:
+            app: ${APPLICATION_NAME}-app
+        spec:
+          containers:
+            - name: springboot
+              image: " "
+              imagePullPolicy: "Always"
+              ports:
+                - containerPort: 8080
+                  protocol: TCP
+              args:
+                - >-
+                  --com.gbm.url=${API_ADDRESS}/calculadora/v1/operaciones
+      triggers:
+        - type: ImageChange
+          imageChangeParams:
+            containerNames:
+            - springboot
+            automatic: true
+            from:
+              kind: ImageStreamTag
+              name: ${FRONT_IMAGE_NAME}
+              namespace: ${IMAGE_NAMESPACE}
+        - type: ConfigChange
+  - kind: Service #frontend-service
+    apiVersion: v1
+    metadata:
+      name: ${APPLICATION_NAME}-app
+    spec:
+      selector:
+        app: ${APPLICATION_NAME}-app
+      type: ClusterIP
+      ports:
+        - name: 8080-tcp
+          port: 8080
+          protocol: TCP
+          targetPort: 8080
+  - kind: Route #frontend-route
+    apiVersion: v1  
+    metadata:
+      name: ${APPLICATION_NAME}-app
+    spec:
+      port:
+        targetPort: 8080-tcp
+      to:
+        kind: Service
+        name: ${APPLICATION_NAME}-app
