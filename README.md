@@ -20,17 +20,13 @@ oc adm policy add-role-to-user admin developer
 ```bash
 oc adm policy add-scc-to-user privileged -z jenkins
 ```
-5. Brindamos el contexto de seguridad `privileged` a la cuenta de servicio `default`
-```bash
-oc adm policy add-scc-to-user privileged -z default
-```
-6. Configuramos el pipeline de despliegue del presente repositorio, tomando en cuenta las siguientes variables en el siguiente ejemplo de YAML:
+5. Brindamos el contexto de seguridad `privileged` a la cuenta de servicio `default`6. Configuramos el pipeline de despliegue del presente repositorio, tomando en cuenta las siguientes variables en el siguiente ejemplo de YAML:
     1. `pipeline-name`: Nombre del recurso BuildConfig a ser creado.
     2. `git-url`: Dirección del git. 
     3. `openshift-current-project`: Nombre del proyecto donde se está desplegando el pipeline.
     4. `registry`: Dirección interna del registro de openshift (predeterminado: 172.30.1.1:5000).
     5. `app`: Prefijo para los diferentes recursos e imágenes a ser generadas (predeterminado: api-calculadora). 
-    6. `api-address`: Ruta donde consumir el API.
+    6. `apiAddress`: Ruta donde consumir el API.
 
 `pipeline-name.yaml`
 ```yaml
@@ -55,7 +51,7 @@ spec:
         value: [registry-url]
       - name: app
         value: [app-prefix]
-      - name: api-address
+      - name: apiAddress
         value: [api-address]
     type: JenkinsPipeline
 ```
@@ -65,5 +61,5 @@ oc start-build [pipeline-name]
 ```
 8. Concluido el despliegue, deberíamos observar el mismo en la consola de openshift o incluso por medio del siguiente comando: 
 ```console
-oc get dc -l app=[image-stream-name]
+oc get dc -l app=[app-prefix]
 ```

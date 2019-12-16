@@ -10,7 +10,7 @@ pipeline{
 		string(defaultValue: "jenkins", description: "Project/Namespace name", name: "project")
 		string(defaultValue: "172.30.1.1:5000", description: "Registry",  name:"registry")
 		string(defaultValue: "front-end-calculadora", description: "Image Name", name: "app")
-		string(description: "API Address", name: "api-address")
+		string(description: "API Address", name: "apiAddress")
 	}
 	stages{
 		stage('Prepare'){
@@ -48,11 +48,11 @@ pipeline{
 								openshift.withProject(){
 									def deployment = openshift.selector('dc',[template: 'frontend-calculadora', app: app])
 									if(!deployment.exists()){             
-										def model = openshift.process("-f", "oc/template.yaml", "-p", "APPLICATION_NAME=${app}", "FRONT_IMAGE_NAME=${app}:latest", "-p", "IMAGE_NAMESPACE=${project}", "-p", "API_ADDRESS=${api-address}")
+										def model = openshift.process("-f", "oc/template.yaml", "-p", "APPLICATION_NAME=${app}", "FRONT_IMAGE_NAME=${app}:latest", "-p", "IMAGE_NAMESPACE=${project}", "-p", "API_ADDRESS=${apiAddress}")
 										openshift.apply(model)
 										deployment = openshift.selector('dc',[template: 'api-calculadora', app: app])
 									}
-									openshift.tag("${app}-ace:${tag}","${app}:latest")
+									openshift.tag("${app}:${tag}","${app}:latest")
 									/*
 									def latestVersion = deployment.object().status.latestVersion
 									def rc = openshift.selector('rc',"${app}-${latestVersion}")
