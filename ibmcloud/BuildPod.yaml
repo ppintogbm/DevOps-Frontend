@@ -4,7 +4,7 @@ metadata:
   labels: 
     app: jenkins-ephemeral
 spec:
-  serviceAccountName: jenkins
+  serviceAccountName: jenkinsci
   volumes:
   - name: docker-credentials
     projected:
