@@ -31,16 +31,32 @@ pipeline{
 				}
 			}
    		}
-		stage('Docker build'){
+		stage('Build Image'){
 			environment {
 				PATH = "/busybox:/kaniko:$PATH"
-				DESTINATION = "${registry}/${project}/${app}-api:${tag}"
+				DESTINATION = "${registry}/${project}/${app}-app:${tag}"
 			}
 			steps{
 				container('kaniko'){
 					sh  '''#!/busybox/sh
 							echo "Building $DESTINATION"
 							/kaniko/executor --dockerfile=Dockerfile --context="dir://`pwd`" --destination="$DESTINATION"
+							'''
+				}
+			}
+		}
+		stage('Deploy'){
+			environment{
+				APPNAME = "${app}"
+				IMAGE = "${registry}/${project}/${app}-api"
+				TAG = "${tag}"
+				API_ADDRESS = "${apiAddress}"
+			}
+			steps{
+				container('helm'){
+					sh 	'''#!/bin/sh
+							/helm init --client-only
+							/helm upgrade $APPNAME ibmcloud/charts/calculadora-api --namespace default --install --set image.repository=$IMAGE,image.tag=$TAG,apiAddress=$API_ADDRESS,ingress.enabled=true,ingress.hosts[0].host=test.com,ingress.hosts[0].paths[0]=/
 							'''
 				}
 			}
