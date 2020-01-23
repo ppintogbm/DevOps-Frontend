@@ -9,7 +9,7 @@ pipeline{
 	parameters{
 		string(defaultValue: "namespacecda", description: "Project/Namespace name", name: "project")
 		string(defaultValue: "us.icr.io", description: "Registry",  name:"registry")
-		string(defaultValue: "calculadora", description: "Image Name", name: "app")
+		string(defaultValue: "calculadora-frontend", description: "Image Name", name: "app")
 		string(description: "API Address", name: "apiAddress")
 	}
 	stages{
