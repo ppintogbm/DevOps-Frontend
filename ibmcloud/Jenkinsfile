@@ -48,7 +48,7 @@ pipeline{
 		stage('Deploy'){
 			environment{
 				APPNAME = "${app}"
-				IMAGE = "${registry}/${project}/${app}-api"
+				IMAGE = "${registry}/${project}/${app}-app"
 				TAG = "${tag}"
 				API_ADDRESS = "${apiAddress}"
 			}
