@@ -1,0 +1,49 @@
+pipeline{
+	agent { 
+        	kubernetes{
+            		cloud "kubernetes"
+            		label "maven-build"
+            		yamlFile "ibmcloud/BuildPod.yaml"
+		}
+    }
+	parameters{
+		string(defaultValue: "namespacecda", description: "Project/Namespace name", name: "project")
+		string(defaultValue: "usc.icr.io", description: "Registry",  name:"registry")
+		string(defaultValue: "calculadora", description: "Image Name", name: "app")
+		string(description: "API Address", name: "apiAddress")
+	}
+	stages{
+		stage('Prepare'){
+			steps{
+				container('maven'){
+					script{
+						tag = sh(  script: "cd CalcExample/;  mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true )
+						tag = tag.toLowerCase()
+					}	
+					echo "Tag: ${tag}"
+				}
+			}
+		}
+		stage('Build jar'){
+			steps{
+				container('maven'){
+					sh "cd CalcExample/; mvn -B clean package"
+				}
+			}
+   		}
+		stage('Docker build'){
+			environment {
+				PATH = "/busybox:/kaniko:$PATH"
+				DESTINATION = "${registry}/${project}/${app}-api:${tag}"
+			}
+			steps{
+				container('kaniko'){
+					sh  '''#!/busybox/sh
+							echo "Building $DESTINATION"
+							/kaniko/executor --dockerfile=Dockerfile --context=dir://`pwd` --destination="$DESTINATION"
+							'''
+				}
+			}
+		}
+	}
+}
