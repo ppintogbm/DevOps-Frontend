@@ -60,10 +60,13 @@ public class Home {
 				} else {
 					model.addAttribute("vResult",
 							"En este momento no podemos llevar acabo su solicitud, favor intentar luego");
+					System.out.println(result.getStatusCode().toString());
+					System.out.println(result.getBody());
 				}
 			} catch (Exception e) {
 				model.addAttribute("vResult",
 						"En este momento no podemos llevar acabo su solicitud, favor intentar luego");;
+						e.printStackTrace();
 				return "index";
 			}
 //			switch (mathType) {
